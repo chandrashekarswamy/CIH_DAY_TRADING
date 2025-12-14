@@ -32,7 +32,7 @@ def expiry_date_str(expiry_label: str) -> str:
     if "Next" in expiry_label:
         days_to_tuesday += 7
     expiry = today + timedelta(days=days_to_tuesday)
-    return expiry.strftime("%d %b").upper()
+    return expiry.strftime("%d %b").upper().replace(" ", "th ", 1)
 
 
 def reset_app():
@@ -135,7 +135,7 @@ Report Time : {now_ist_str()}
 
         st.markdown(
             f"""
-**{symbol}**
+**{symbol}**  
 <span style="font-size:12px;">Report Time : {now_ist_str()}</span>
 """,
             unsafe_allow_html=True,
@@ -163,13 +163,10 @@ EXIT   : SL hit | T2 hit | Time exit on/before 15:10 IST
 
     st.markdown(
         f"""
-<div style="display:flex; align-items:center; gap:10px; white-space:nowrap;">
-  <span style="font-size:16px;">Enter</span>
+<div style="display:flex; align-items:center; gap:10px;">
+  <span style="font-size:16px;">Enter Value of</span>
   <span style="font-size:16px; font-weight:600; color:{color};">
     NIFTY {expiry} {strike} {opt}
-  </span>
-  <span style="font-size:12px; opacity:0.8;">
-    Report Time : {now_ist_str()}
   </span>
 </div>
 """,
@@ -188,17 +185,28 @@ EXIT   : SL hit | T2 hit | Time exit on/before 15:10 IST
                 orb_low=st.session_state["orb"]["low"],
             )
 
+            entry_low, entry_high = opt_trade["entry"]
+            avg_entry = (entry_low + entry_high) / 2
+
+            profit_pct = round(
+                ((opt_trade["target"] - avg_entry) / avg_entry) * 100, 2
+            )
+            loss_pct = round(
+                ((avg_entry - opt_trade["sl"]) / avg_entry) * 100, 2
+            )
+
             st.code(
                 f"""
-NIFTY {expiry} {strike} {opt}
-Entry  : {opt_trade['entry'][0]} – {opt_trade['entry'][1]}
+NIFTY {expiry} {strike} {opt} | Profit : {profit_pct}% | Loss : {loss_pct}% | Report Time : {now_ist_str()}
+--------------------------------------------------------------------------------
+Entry  : {entry_low} – {entry_high}
 Target : {opt_trade['target']}
 SL     : {opt_trade['sl']}
 Exit   : Delta-based | Tight SL | Time exit on/before 15:10 IST
-
 (This is strictly for educational purpose !!!)
 """,
                 language="text",
             )
+
         except ValueError:
             st.error("Please enter valid Option LTP")

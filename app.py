@@ -35,22 +35,6 @@ def expiry_date_str(expiry_label: str) -> str:
     return expiry.strftime("%d %b").upper()
 
 
-def action_badge(action: str) -> str:
-    color = "#00C853" if action == "LONG" else "#FF5252"
-    return f"""
-<span style="
-    padding:2px 8px;
-    border-radius:6px;
-    background-color:{color};
-    font-size:12px;
-    font-weight:600;
-    margin-left:6px;
-">
-{action}
-</span>
-"""
-
-
 def reset_app():
     for k in list(st.session_state.keys()):
         del st.session_state[k]
@@ -151,8 +135,8 @@ Report Time : {now_ist_str()}
 
         st.markdown(
             f"""
-**{symbol}** {action_badge(sd['action'])}
-&nbsp;&nbsp;<span style="font-size:12px;">Report Time : {now_ist_str()}</span>
+**{symbol}**
+<span style="font-size:12px;">Report Time : {now_ist_str()}</span>
 """,
             unsafe_allow_html=True,
         )
@@ -163,6 +147,8 @@ ENTRY  : {entry}
 SL     : {sl}
 TARGET : T1 {t1} | T2 {tgt}
 EXIT   : SL hit | T2 hit | Time exit on/before 15:10 IST
+
+(This is strictly for educational purpose !!!)
 """,
             language="text",
         )
@@ -176,39 +162,19 @@ EXIT   : SL hit | T2 hit | Time exit on/before 15:10 IST
     color = "#00C853" if opt == "CE" else "#FF5252"
 
     st.markdown(
-    f"""
-<div style="
-    display:flex;
-    align-items:center;
-    gap:10px;
-    white-space:nowrap;
-">
-  <span style="font-size:16px;">
-    Enter
-  </span>
-
+        f"""
+<div style="display:flex; align-items:center; gap:10px; white-space:nowrap;">
+  <span style="font-size:16px;">Enter</span>
   <span style="font-size:16px; font-weight:600; color:{color};">
     NIFTY {expiry} {strike} {opt}
   </span>
-
-  <span style="
-    padding:2px 8px;
-    border-radius:6px;
-    background-color:{'#00C853' if sd['action']=='LONG' else '#FF5252'};
-    font-size:12px;
-    font-weight:600;
-  ">
-    {sd['action']}
-  </span>
-
   <span style="font-size:12px; opacity:0.8;">
     Report Time : {now_ist_str()}
   </span>
 </div>
 """,
-    unsafe_allow_html=True,
-)
-
+        unsafe_allow_html=True,
+    )
 
     ltp = st.text_input("")
 
@@ -229,6 +195,8 @@ Entry  : {opt_trade['entry'][0]} – {opt_trade['entry'][1]}
 Target : {opt_trade['target']}
 SL     : {opt_trade['sl']}
 Exit   : Delta-based | Tight SL | Time exit on/before 15:10 IST
+
+(This is strictly for educational purpose !!!)
 """,
                 language="text",
             )
